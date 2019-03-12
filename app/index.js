@@ -4,7 +4,9 @@ const https = require('https');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
-const fs = require('fs')
+const fs = require('fs');
+const { users, ping, notFound} = require('./lib/handlers');
+const helpers = require('./lib/helpers'); 
 
 // All the server logic both the http and htppd 
 const unifiedServer =   (req, res) => {
@@ -38,7 +40,7 @@ const unifiedServer =   (req, res) => {
     //Choose the handler this request should go. If one is not found use the not found handler
     let chosenHandler  = typeof(router[trimmedPath]) !== 'undefined'? 
       router[trimmedPath] : 
-      handlers.notFound;
+      notFound;
 
     // Construct the data object to send to the handler.
     let data = {
@@ -46,7 +48,7 @@ const unifiedServer =   (req, res) => {
       queryStringObject,
       method,
       headers,
-      payload: buffer
+      payload: helpers.parseJsonToObject(buffer)
     }
 
     // Route the request to the handler specified in the router.
@@ -93,21 +95,9 @@ httpsServer.listen(httpsPort, ()=> {
   console.log(`The https server is listening on port ${httpsPort}`);
 }); 
 
-// Define handlers.
-let handlers = {};
-
-//ping handler
-handlers.ping = (data, callback) => {
-  callback(200)
-}
-
-
-// Not found handler
-handlers.notFound = (data, callback) => {
-  callback(404)
-}
 
 // Define a request router.
 let router = {
-  'ping': handlers.ping
+  'ping': ping,
+  'users': users
 }
