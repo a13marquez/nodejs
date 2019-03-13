@@ -3,9 +3,9 @@ const http = require('http');
 const https = require('https');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
-const config = require('./config');
+const config = require('./lib/config');
 const fs = require('fs');
-const { users, ping, notFound} = require('./lib/handlers');
+const { users, tokens, ping, notFound} = require('./lib/handlers');
 const helpers = require('./lib/helpers'); 
 
 // All the server logic both the http and htppd 
@@ -63,7 +63,7 @@ const unifiedServer =   (req, res) => {
       let payloadString = JSON.stringify(payload); 
 
       // Return the response
-      res.setHeader('Content-Type', 'application/json');
+      //res.setHeader('Content-Type', 'application/json');
       res.writeHead(statusCode);
       res.end(payloadString);
 
@@ -99,5 +99,6 @@ httpsServer.listen(httpsPort, ()=> {
 // Define a request router.
 let router = {
   'ping': ping,
-  'users': users
+  'users': users,
+  'tokens': tokens
 }

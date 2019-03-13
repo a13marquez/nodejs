@@ -4,7 +4,7 @@
 
 // Dependencies
 const crypto = require('crypto');
-const config = require('../config');
+const config = require('./config');
 
 var helpers = {}
 
@@ -25,6 +25,24 @@ helpers.parseJsonToObject = str => {
   } catch(e) {
     return {}
   }
+}
+
+// Create random string of given length
+helpers.createRandomString = (strLength) => {
+  strLength = parseInt(strLength) > 0 ? parseInt(strLength) : false;
+  const possibleCharacters = 'abcdefghijklmnopqrstuvwxyz1234567890';
+
+  // Start the final string
+  var str = '';
+  for (strLength; strLength--;) {
+    // Get a random char
+    const randomCharacter = possibleCharacters
+      .charAt(Math.floor(Math.random() * possibleCharacters.length));
+    str+=randomCharacter
+  }
+  // Return the final string
+  return str;
+
 }
 
 // Export the module
