@@ -10,7 +10,8 @@
   'httpPort': 3000,
   'httpsPort': 3001,
   'envName': 'staging',
-  'hashSecret': 'thisIsASecret'
+  'hashSecret': 'thisIsASecret',
+  'maxChecks': 5
  };
 
  // Production environment.
@@ -18,7 +19,8 @@
   'httpPort': 5000,
   'httpsPort': 5001,
   'envName': 'production',
-  'hashSecret': 'thisIsAlsoASecret'
+  'hashSecret': 'thisIsAlsoASecret',
+  'maxChecks': 5
  };
 
  // Determine which enironment was passed as a command-line argument.

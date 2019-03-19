@@ -5,7 +5,7 @@ const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./lib/config');
 const fs = require('fs');
-const { users, tokens, ping, notFound} = require('./lib/handlers');
+const { users, tokens, checks, ping, notFound } = require('./lib/handlers');
 const helpers = require('./lib/helpers'); 
 
 // All the server logic both the http and htppd 
@@ -98,7 +98,8 @@ httpsServer.listen(httpsPort, ()=> {
 
 // Define a request router.
 let router = {
-  'ping': ping,
-  'users': users,
-  'tokens': tokens
+  ping,
+  users,
+  tokens,
+  checks
 }
