@@ -17,16 +17,10 @@ const path = require('path');
 
 // Instantiate the server module
 const server = {};
-
-// Instantiate the HTTP server
-server.httpServer = http.createServer(server.unifiedServer);
-
-// Instantiate the HTTPS server
-server.httpsServer = https.createServer(server.httpsServerOptions, 
-  server. unifiedServer); 
+ 
 
 // All the server logic both the http and htppd 
-server.unifiedServer =   (req, res) => {
+server.unifiedServer =  (req, res) => {
   
   // Get the URL and parse it.
   let parsedUrl = url.parse(req.url, true)
@@ -100,9 +94,12 @@ server.httpsServerOptions = {
 
 //Start the servers
 
+// Instantiate the HTTP server
+server.httpServer = http.createServer(server.unifiedServer);
 
-
-
+// Instantiate the HTTPS server
+server.httpsServer = https.createServer(server.httpsServerOptions, 
+  server. unifiedServer);
 
 
 // Define a request router.

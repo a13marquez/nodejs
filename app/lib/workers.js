@@ -4,12 +4,11 @@
  */
 
  // Dependencies
- const path = require('path');
- const fs = require('fs');
  const http = require('http');
  const https = require('https');
  const { list, read, remove, update } = require('./data');
  const { sendTwilioSms } = require('./helpers');
+ const url = require('url')
 
 
 // Instantiate the workers
@@ -32,13 +31,14 @@ workers.gatheAllChecks = () => {
         });
       }
     } else {
-      console.error("Error: Could no find any checks to process");
+      console.error("Error: Could not find any checks to process");
     }
   });
 };
 
 // Sanity-check the check-data
 workers.validateCheckData = (originalCheckData) => {
+  console.log(originalCheckData);
   originalCheckData = typeof(originalCheckData) === 'object' && 
     originalCheckData !== null ? originalCheckData : {};
   originalCheckData.id = typeof(originalCheckData.id) === 'string' && 
@@ -47,10 +47,10 @@ workers.validateCheckData = (originalCheckData) => {
   originalCheckData.userPhone = typeof(originalCheckData.userPhone)==='string' 
   &&  originalCheckData.userPhone.trim().length >= 10 ? 
   originalCheckData.userPhone.trim() : false;
-  originalCheckData.protocol = typeof(originalCheckData.protocol)==='string' 
+  originalCheckData.protocol = typeof(originalCheckData.protocol)==='string' &&
   ['http', 'htpps'].includes(originalCheckData.protocol.trim()) ? 
   originalCheckData.protocol.trim() : false;
-  originalCheckData.method = typeof(originalCheckData.method)==='string' 
+  originalCheckData.method = typeof(originalCheckData.method)==='string' &&
   ['get', 'post', 'put', 'delete'].includes(originalCheckData.method.trim()) ? 
   originalCheckData.method.trim() : false;
   originalCheckData.url = typeof(originalCheckData.url)==='string' 
@@ -60,21 +60,21 @@ workers.validateCheckData = (originalCheckData) => {
   &&  originalCheckData.successCodes.length > 0 ? 
   originalCheckData.successCodes : false;
   originalCheckData.timeoutSeconds = 
-    typeof(originalCheckData.timeoutSeconds)==='number' 
+  typeof(originalCheckData.timeoutSeconds)==='number' 
     &&  originalCheckData.timeoutSeconds >= 1 && 
     originalCheckData.timeoutSeconds <= 5 ? 
     originalCheckData.timeoutSeconds : false;
-
+  
   // Set the keys that may not be set (if the workers have never seen this 
   //  check before)
-  originalCheckData.state = typeof(originalCheckData.state)==='string' 
+  originalCheckData.state = typeof(originalCheckData.state)==='string' &&
   ['up', 'down'].includes(originalCheckData.state.trim()) ? 
   originalCheckData.state.trim() : 'down';
-  originalCheckData.timeoutSeconds = 
+  originalCheckData.lastChecked = 
     typeof(originalCheckData.lastChecked)==='number' 
     &&  originalCheckData.lastChecked >= 0 ? 
     originalCheckData.lastChecked : false;
-
+    console.log(originalCheckData)
   // If all the checks pass pass the data along the next step
   if(originalCheckData.id &&  originalCheckData.userPhone && 
     originalCheckData.url && originalCheckData.protocol &&
@@ -156,7 +156,7 @@ workers.performCheck = (originalCheckData) =>{
 
 // Process the checkoutcome, update the check data as needed, trigger an alert for the user
 // Special logic for acommodatin a check that has never been tested before
-workers.processCheckout = (originalCheckData, checkOutcome ) => {
+workers.processCheckoutcome = (originalCheckData, checkOutcome ) => {
   // Decide if the check is considerer up or down
   const state = !checkOutcome.error && checkOutcome.responseCode && 
     originalCheckData.successCodes.includes(checkOutcome.responseCode) ? 

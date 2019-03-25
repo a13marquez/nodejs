@@ -296,6 +296,7 @@ handlers._tokens.post = (data, callback) => {
     data.payload.password.trim().length > 0 ? data.payload.password.trim() :
     false; 
   if (phone && password) {
+    console.log('aaaaaaa')
     // Lookup the user who matches that phone
     read('users', phone, (err, userData) =>{
       if(!err && userData) {
